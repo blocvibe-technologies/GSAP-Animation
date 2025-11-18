@@ -22,8 +22,51 @@
       }
       /* ADD THIS NEW RULE */
       .logo-container {
-        filter: blur(0.6) brightness(1.01) contrast(40%);
-      }
+  position: absolute;
+  left: 30%;
+  top: 45%;              /* place near horizon */
+  width: 800px;
+  height: 800px;
+  pointer-events: none;
+}
+
+/* sunrise overlay */
+.logo-container::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 100%;            /* thin band near horizon */
+  bottom: -10%;           /* nudge below element box - adjust to taste */
+  background:
+    radial-gradient(ellipse at 50% 80%,
+      rgba(255, 180, 90, 0.55) 0%,
+      rgba(255, 130, 50, 0.28) 30%,
+      rgba(255, 90, 30, 0.12) 60%,
+      rgba(0,0,0,0) 100% );
+  filter: blur(28px);
+  mix-blend-mode: screen; /* or overlay / soft-light to taste */
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* small top glow (sun disk highlight) */
+.logo-container::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 12%;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(255,220,160,0.95) 0%, rgba(255,160,80,0.35) 30%, rgba(255,160,80,0) 60%);
+  filter: blur(18px);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
     </style>
   </head>
   <body>
@@ -37,8 +80,21 @@
         class="h-screen sky-background overflow-hidden"
       >
         <div class="relative h-full px-20">
+          <!-- MIRRORED / BACK MOUNTAIN (placed BEFORE the main one in DOM) -->
           <div
-            class="left-mountain left-container absolute z-25 top-0 scale-175 origin-right z-20"
+            class="left-mountain left-container absolute top-45 left-44 -translate-x-1/2 origin-center z-30"
+            aria-hidden="true"
+          >
+            <img
+              src="assets/leftMountain.png"
+              class="w-full h-full object-cover transform scale-x-[-1]"
+              alt=""
+            />
+          </div>
+
+          <!-- ORIGINAL / FOREGROUND MOUNTAIN (your existing one) -->
+          <div
+            class="left-mountain left-container absolute z-25 top-40 left-90 origin-right z-20"
           >
             <img
               src="assets/leftMountain.png"
@@ -48,7 +104,7 @@
           </div>
 
           <div
-            class="logo-container absolute top-220 z-1 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] z-10"
+            class="logo-container "
           >
             <img
               src="assets/logo.png"
@@ -62,7 +118,7 @@
           >
             <img
               src="assets/middle.png"
-              class="absolute middle-mountain top-10 left-0 w-full h-auto scale-110 object-cover"
+              class="absolute middle-mountain top-10 left-0 w-full h-auto object-cover"
               alt=""
             />
             <img
@@ -100,7 +156,7 @@
           trigger: ".hero-section",
           start: "top top",
           end: "+=200%",
-          scrub: 0.8,
+          scrub: 2,
           pin: true,
         },
       });
@@ -108,8 +164,8 @@
       tl.to(
         ".logo-container",
         {
-          scale: 1.35,
-          y: "-12%",
+          scale: 1.6,
+          y: "-42%",
           ease: "none",
         },
         0
@@ -149,7 +205,7 @@
       tl.to(
         ".right-mountains .bottom-mountain",
         {
-          y: "15%",
+          y: "-15%",
           scale: 2,
           ease: "none",
         },
