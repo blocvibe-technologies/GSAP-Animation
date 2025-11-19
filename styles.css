@@ -14,3 +14,88 @@ body {
   width: 40rem;
   height: 50rem;
 }
+.mountain-group img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+/* Custom CSS for complex gradients and positioning */
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: #0b0f1a;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.layer img.layer-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  --glowOuter: 1; /* Opacity of outer glow */
+  --glowInner: 1; /* Opacity of inner glow */
+}
+
+/* Sunrise Glow (Outer) */
+
+.logo-container::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -5%;
+  width: 120%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 80%,
+    rgba(255, 180, 90, calc(0.55 * var(--glowOuter))) 0%,
+    rgba(255, 130, 50, calc(0.28 * var(--glowOuter))) 30%,
+    rgba(255, 90, 30, calc(0.12 * var(--glowOuter))) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  filter: blur(1.75rem);
+  mix-blend-mode: screen;
+}
+
+.logo-container::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 12%;
+  width: 7.5rem;
+  height: 7.5rem;
+  background: radial-gradient(
+    circle,
+    rgba(255, 220, 160, calc(0.95 * var(--glowInner))) 0%,
+    rgba(255, 160, 80, calc(0.35 * var(--glowInner))) 30%,
+    rgba(255, 160, 80, 0) 60%
+  );
+  filter: blur(1.125rem);
+}
+
+.layer,
+.layer img.layer-img,
+.logo-container,
+.foreground-group,
+.hill-group {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* constrain layout work: keep hero-section at fixed height */
+.hero-section {
+  height: 100svh; /* stable viewport unit for mobile */
+  contain: paint; /* reduce layout/paint scope (browser support okay) */
+}

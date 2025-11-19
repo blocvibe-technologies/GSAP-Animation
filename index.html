@@ -4,221 +4,58 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GSAP Scroll-Triggered Zoom</title>
-    <link
-      rel="icon"
-      href="assets/logo.jpeg viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%230b0f1a'/%3E%3C/svg%3E"
-    />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      .hero-section {
-        position: relative;
-        z-index: 1;
-      }
-      .content-section {
-        position: relative;
-        z-index: 2;
-        background-color: white; /* Example */
-      }
-      /* ADD THIS NEW RULE */
-      .logo-container {
-  position: absolute;
-  left: 30%;
-  top: 45%;              /* place near horizon */
-  width: 800px;
-  height: 800px;
-  pointer-events: none;
-}
-
-/* sunrise overlay */
-.logo-container::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120%;
-  height: 100%;            /* thin band near horizon */
-  bottom: -10%;           /* nudge below element box - adjust to taste */
-  background:
-    radial-gradient(ellipse at 50% 80%,
-      rgba(255, 180, 90, 0.55) 0%,
-      rgba(255, 130, 50, 0.28) 30%,
-      rgba(255, 90, 30, 0.12) 60%,
-      rgba(0,0,0,0) 100% );
-  filter: blur(28px);
-  mix-blend-mode: screen; /* or overlay / soft-light to taste */
-  opacity: 0.95;
-  pointer-events: none;
-}
-
-/* small top glow (sun disk highlight) */
-.logo-container::after{
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 12%;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(255,220,160,0.95) 0%, rgba(255,160,80,0.35) 30%, rgba(255,160,80,0) 60%);
-  filter: blur(18px);
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-    </style>
   </head>
   <body>
-    <section class="hero-section overflow-hidden">
-      <div
-        style="
-          background-image: url(assets/sky.jpeg);
-          background-repeat: repeat;
-          background-size: cover;
-        "
-        class="h-screen sky-background overflow-hidden"
-      >
-        <div class="relative h-full px-20">
-          <!-- MIRRORED / BACK MOUNTAIN (placed BEFORE the main one in DOM) -->
-          <div
-            class="left-mountain left-container absolute top-45 left-44 -translate-x-1/2 origin-center z-30"
-            aria-hidden="true"
-          >
-            <img
-              src="assets/leftMountain.png"
-              class="w-full h-full object-cover transform scale-x-[-1]"
-              alt=""
-            />
-          </div>
+    <section class="hero-section relative w-full h-dvh overflow-hidden">
+      <div class="layer z-0 origin-center" style="background-color: #d4e4ee">
+        <img
+          src="assets/0_sky.png"
+          class="w-full h-full sky-img object-cover"
+          alt="Sky"
+        />
+      </div>
 
-          <!-- ORIGINAL / FOREGROUND MOUNTAIN (your existing one) -->
-          <div
-            class="left-mountain left-container absolute z-25 top-40 left-90 origin-right z-20"
-          >
-            <img
-              src="assets/leftMountain.png"
-              class="w-full h-full object-cover"
-              alt=""
-            />
-          </div>
+      <div class="layer z-10 hill-group translate-y-12">
+        <img
+          src="assets/2_Mountain.png"
+          class="layer object-cover object-left-bottom"
+          alt="Back Mountain"
+        />
+        <img
+          src="assets/3_Hill.png"
+          class="layer object-cover object-left-bottom"
+          alt="Hill"
+        />
+      </div>
 
-          <div
-            class="logo-container "
-          >
-            <img
-              src="assets/logo.png"
-              class="w-full h-full object-cover"
-              alt=""
-            />
-          </div>
+      <div class="logo-container">
+        <img
+          src="assets/1_BellasWorldLogo.png"
+          class="w-full h-full object-cover relative top-60"
+          alt="Logo"
+        />
+      </div>
 
-          <div
-            class="right-mountains z-50 absolute top-0 left-0 w-full h-full z-30"
-          >
-            <img
-              src="assets/middle.png"
-              class="absolute middle-mountain top-10 left-0 w-full h-auto object-cover"
-              alt=""
-            />
-            <img
-              src="assets/another.png"
-              class="absolute top-0 bottom-mountain left-0 w-full h-auto object-cover"
-              alt=""
-            />
-          </div>
-        </div>
+      <div class="layer z-30 foreground-group">
+        <img
+          src="assets/4_Hill_MidGround.png"
+          class="layer object-cover middle-mountain"
+          alt="Mid Ground"
+        />
+        <img
+          src="assets/5_Foreground.png"
+          class="layer object-cover bottom-mountain"
+          alt="Foreground"
+        />
       </div>
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <style>
-      /* add these if not present */
-      .left-mountain,
-      .right-mountains,
-      .logo-container,
-      .sky-background {
-        will-change: transform, opacity;
-      }
-    </style>
-
-    <script>
-      gsap.registerPlugin(ScrollTrigger);
-
-      gsap.set(".logo-container", { transformOrigin: "center center" });
-      gsap.set(".left-mountain", { transformOrigin: "right center" });
-      gsap.set(".right-mountains", { transformOrigin: "center center" });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "+=200%",
-          scrub: 2,
-          pin: true,
-        },
-      });
-
-      tl.to(
-        ".logo-container",
-        {
-          scale: 1.6,
-          y: "-42%",
-          ease: "none",
-        },
-        0
-      );
-
-      tl.to(
-        ".right-mountains",
-        {
-          scale: 1.25,
-          x: 40,
-          y: "30%",
-          ease: "none",
-        },
-        0
-      );
-
-      tl.to(
-        ".left-mountain",
-        {
-          scale: 1.15, // smallest zoom (furthest away)
-          x: -60, // small horizontal move left
-          y: "18%", // small downward move
-          ease: "none",
-        },
-        0
-      );
-      tl.to(
-        ".right-mountains .middle-mountain",
-        {
-          y: "-15%",
-          ease: "none",
-          scale: 2.3,
-        },
-        0
-      );
-
-      tl.to(
-        ".right-mountains .bottom-mountain",
-        {
-          y: "-15%",
-          scale: 2,
-          ease: "none",
-        },
-        0
-      );
-      tl.to(
-        ".sky-background",
-        {
-          scale: 1.08,
-          ease: "none",
-        },
-        0
-      );
-    </script>
+    <script src="/script.js"></script>
   </body>
 </html>
