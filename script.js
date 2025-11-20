@@ -4,20 +4,25 @@ const mm = gsap.matchMedia();
 
 mm.add(
   {
-    isDesktop: "(min-width: 768px)",
+    // desktop >= 1024px
+    isDesktop: "(min-width: 1024px)",
+    // tablet: 768px — 1023px
+    isTablet: "(min-width: 768px) and (max-width: 1023px)",
+    // mobile <= 767px
     isMobile: "(max-width: 767px)",
   },
   (ctx) => {
-    const { isDesktop } = ctx.conditions;
+    const { isDesktop, isTablet } = ctx.conditions;
 
-    // Set stable initial state
+    // Stable initial state for logo
     gsap.set(".logo-container", {
       scale: 1,
-      yPercent: 0,
+      y: 0,
       transformOrigin: "50% 50%",
+      willChange: "transform, opacity",
     });
 
-    // Use bottom-centre origin for depth/zoom feeling
+    // Base states for other layers
     gsap.set(".foreground-group, .hill-group, .sky-img", {
       scale: 1,
       xPercent: 0,
@@ -26,12 +31,12 @@ mm.add(
       willChange: "transform",
     });
 
-    // Base timeline used for the hero-section scroll
+    const hero = document.querySelector(".hero-section");
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: ".hero-section",
         start: "top top",
-        end: () => `+=${document.querySelector(".hero-section").clientHeight * 2}`,
+        end: () => `+=${hero.clientHeight * 2}`,
         scrub: 1.0,
         pin: true,
         anticipatePin: 1,
@@ -40,42 +45,44 @@ mm.add(
     });
 
     if (isDesktop) {
-      // Desktop — focus on vertical zoom with minimal horizontal shift
+      // Desktop — subtle, large viewport movement
       tl.to(
         ".logo-container",
-        { scale: 1.5, yPercent: '-50vh', ease: "power2.out", overwrite: "auto" },
+        {
+          scale: 1.5,
+          yPercent: -10,
+          ease: "power2.out",
+          overwrite: "auto",
+        },
         0
       );
 
       tl.to(
         ".foreground-group",
         {
-          scale: 1.9,     // gentle but noticeable zoom
-          xPercent:10,    // tiny horizontal nudge only
-          y: "35vh",      // vertical movement in viewport units
+          scale: 1.9,
+          xPercent: 10,
+          y: "30vh",
           ease: "power2.out",
           overwrite: "auto",
         },
         0
       );
 
-      // Hills tuned for desktop (subtle, to support depth)
       tl.to(
         ".hill-group",
         {
-          scale: 1.28,
-          xPercent: -15,
-          yPercent:60 ,      // small upward shift
+          scale: 2,
+          xPercent: -8,
+          yPercent: 60,
           ease: "power2.out",
           overwrite: "auto",
         },
         0
       );
 
-      // gentle sky scale (background)
       tl.to(".sky-img", { scale: 1.5, ease: "none", overwrite: "auto" }, 0);
 
-      // logo glow fade (timed slightly later)
       tl.to(
         ".logo-container",
         {
@@ -87,8 +94,59 @@ mm.add(
         },
         0.3
       );
+    } else if (isTablet) {
+      // Tablet — between desktop and mobile: stronger than desktop but gentler than mobile
+      tl.to(
+        ".logo-container",
+        {
+          scale: 1.8,
+          y: "-35vh", // use viewport units for tablet vertical move
+          ease: "power2.out",
+          overwrite: "auto",
+        },
+        0
+      );
+
+      tl.to(
+        ".foreground-group",
+        {
+          scale: 1.85,
+          xPercent: 12,
+          y: "28vh",
+          ease: "power2.out",
+          overwrite: "auto",
+        },
+        0
+      );
+
+      tl.to(
+        ".hill-group",
+        {
+          scale: 1.6,
+          xPercent: -12,
+          yPercent: 50,
+          ease: "power2.out",
+          overwrite: "auto",
+        },
+        0
+      );
+
+      tl.to(".sky-img", { scale: 1.5, ease: "none", overwrite: "auto" }, 0);
+
+      // fade logo glow a bit later
+      tl.to(
+        ".logo-container",
+        {
+          "--glowOuter": 0,
+          "--glowInner": 0,
+          ease: "power2.out",
+          duration: 0.35,
+          overwrite: "auto",
+        },
+        0.28
+      );
     } else {
-      // Mobile — stronger foreground zoom but keep horizontal minimal
+      // Mobile — strongest foreground zoom, percent-based logo translation is fine
       tl.to(
         ".logo-container",
         {
@@ -110,32 +168,29 @@ mm.add(
       tl.to(
         ".foreground-group",
         {
-          scale: 2,        // stronger zoom on mobile
-          xPercent: 15,     // keep horizontal movement very small
-          y: "25vh",      // move up (negative moves up)
+          scale: 2,
+          xPercent: 15,
+          y: "25vh",
           ease: "power2.out",
           overwrite: "auto",
         },
         0
       );
 
-      // Hills tuned for mobile (different sign if you want them to move in opposite direction)
       tl.to(
         ".hill-group",
         {
           scale: 1.18,
           xPercent: -15,
-          y: "20vh",    // mobile hill vertical offset — keeps depth consistent
+          y: "20vh",
           ease: "power2.out",
           overwrite: "auto",
         },
         0
       );
 
-      // sky background for mobile
       tl.to(".sky-img", { scale: 1.5, ease: "none", overwrite: "auto" }, 0);
     }
-
     // end mm.add callback
   }
 );
