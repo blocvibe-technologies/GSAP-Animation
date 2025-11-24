@@ -107,7 +107,7 @@ mm.add(
         ".logo-container",
         {
           scale: 1.8,
-          y: "-35vh", // use viewport units for tablet vertical move
+          y: "-20vh", // use viewport units for tablet vertical move
           ease: "power2.out",
           overwrite: "auto",
         },
@@ -168,7 +168,7 @@ mm.add(
 
       tl.to(
         ".logo-container",
-        { scale: 2, yPercent: -50, ease: "power2.out", overwrite: "auto" },
+        { scale: 2.8, yPercent: -60, ease: "power2.out", overwrite: "auto" },
         0
       );
 
