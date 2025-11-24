@@ -21,6 +21,13 @@ mm.add(
       transformOrigin: "50% 50%",
       willChange: "transform, opacity",
     });
+    gsap.set(".logo-container", {
+      css: {
+        "--glowInnerLogo": 1,
+        "--glowOuterSpread": 0.15,
+        "--glowBlur": "28px",
+      },
+    });
 
     // Base states for other layers
     gsap.set(".foreground-group, .hill-group, .sky-img", {
